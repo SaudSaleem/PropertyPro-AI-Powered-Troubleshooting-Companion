@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: propertypro@12345
+      POSTGRES_DB: propertypro
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data_new:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      - db
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "8080:8080"
+
+volumes:
+  pg_data_new:
