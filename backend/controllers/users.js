@@ -1,8 +1,14 @@
-const { User } = require("../models");
+const { User, Chat } = require("../models");
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      include: {
+        model: Chat,
+        order: [["updatedAt", "DESC"]], // Order chats by updatedAt attribute in descending order
+        limit: 5,
+      },
+    });
     res.status(200).json(users);
   } catch (e) {
     console.log(e);

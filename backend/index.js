@@ -1,16 +1,19 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 
-// Import your Sequelize models
-const { sequelize } = require('./models');
+const users = require("./routes/users.js");
+const login = require("./routes/login.js");
+const { sequelize } = require("./models");
+const isAdmin = require("./middlewares/isAdmin.js");
+const verifyToken = require("./middlewares/verifyToken.js");
 
-app.get('/', (req, res) => {
-  res.send('Welcome to PropertyPro API!');
+
+app.use(express.json());
+app.get("/api", (req, res) => {
+  res.send("Welcome to PropertyPro APIs!");
 });
-
-const users = require('./routes/users.js');
-
-app.use('/users', users);
+app.use("/api/", login);
+app.use("/api/users", verifyToken, isAdmin, users);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
