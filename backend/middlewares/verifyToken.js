@@ -2,14 +2,12 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config.json');
 
 const verifyToken = (req, res, next) => {
-  console.log(123, req.headers)
   // Extract token from headers, cookies, or request body
-  const token = req.headers.authorization;
-
-  // If token is not provided, return unauthorized error
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader) {
+    return res.status(401).json({ error: 'Unauthorized: No Authorization header provided' });
   }
+  const token = authorizationHeader.split(' ')[1];
 
   // Verify token
   jwt.verify(token, config.token_secret, (err, decoded) => {

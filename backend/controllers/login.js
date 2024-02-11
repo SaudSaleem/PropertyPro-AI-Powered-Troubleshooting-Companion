@@ -7,7 +7,7 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+    let user = await User.findOne({ where: { email } });
     // If user not found, return error
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -26,7 +26,12 @@ const loginUser = async (req, res) => {
     res.cookie("token", token, { httpOnly: true }); // Set as HTTP-only cookie for security
 
     // Return success response with token
-    return res.status(200).json({ message: "Login successful", token });
+     user = {
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+    return res.status(200).json({ message: "Login successful", token, user });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Internal server error" });

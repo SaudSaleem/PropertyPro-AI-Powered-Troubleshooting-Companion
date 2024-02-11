@@ -20,16 +20,6 @@ if (config.use_env_variable) {
     config
   );
 }
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log(786, "Connection has been established successfully.");
-  } catch (e) {
-    console.log("error", e);
-  }
-}
-
-testConnection();
 
 fs.readdirSync(__dirname)
   .filter((file) => {
