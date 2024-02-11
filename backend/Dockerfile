@@ -1,13 +1,14 @@
 # Use the official Node.js image as base
-FROM node:latest
+FROM node:latest as build-stage
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json to container
 COPY package*.json ./
 
 # Install dependencies
+RUN npm cache clean --force
 RUN npm install
 
 # Install pm2 globally
@@ -20,4 +21,4 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the application with pm2
-CMD ["pm2-runtime", "npm", "--", "start"]
+CMD ["bash", "-c", "npx sequelize-cli db:migrate && pm2-runtime npm -- start"]

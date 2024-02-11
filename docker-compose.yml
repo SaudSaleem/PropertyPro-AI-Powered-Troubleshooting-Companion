@@ -30,7 +30,7 @@ services:
     build: ./frontend
     restart: always
     ports:
-      - "8080:8080"
+      - "80:80"
 
 volumes:
   pg_data_new:

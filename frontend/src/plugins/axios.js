@@ -9,9 +9,9 @@ const notyf = new Notyf({
     y: 'top'
   }
 })
-
+console.log('VUE_APP_API_URL', import.meta.env.VITE_ROOT_API)
 const instance = axios.create({
-  baseURL: config.baseURL
+  baseURL: import.meta.env.VITE_ROOT_API+'/api/'
 })
 
 // Request interceptor
