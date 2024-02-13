@@ -3,10 +3,10 @@ const OpenAI = require("openai");
 const { Chat } = require("../models");
 const config = require("../config/config.json");
 
+console.log('openai', process.env.OPENAI_API_KEY)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-console.log('openai', process.env.OPENAI_API_KEY)
 // Helper function to fetch latest 5 messages from Chat model
 async function fetchChatHistory(chatId) {
   try {
