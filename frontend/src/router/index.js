@@ -16,7 +16,7 @@ const routes = [
     component: SignUpView
   },
   {
-    path: '/chat',
+    path: '/',
     name: 'ChatView',
     component: ChatView
   },

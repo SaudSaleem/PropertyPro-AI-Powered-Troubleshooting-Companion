@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </div>
-            <div class="overflow-y-auto" id="chat-area">
+            <div class="overflow-y-auto" id="chat-area" v-if="messages.length">
                 <div v-for="(message, index) in messages" :key="index" class="text-white">
                     <div class="w-full text-token-text-primary" data-testid="conversation-turn-3"
                         style="--avatar-color: #19c37d;">
@@ -74,6 +74,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div v-else class="flex justify-center items-center help-text">
+                <span class="text-2xl text-white">How can I help you today?</span>
             </div>
             <!-- TEXT AREA -->
             <div
@@ -115,26 +118,7 @@ export default {
         return {
             userName: "",
             userEmail: "",
-            messages: [
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-                { role: 'assistant', content: 'Hello! How can I assist you?' },
-                { role: 'user', content: 'Hello! How can I need help' },
-            ],
+            messages: [],
             newMessage: ''
         }
     },
@@ -145,7 +129,6 @@ export default {
             }
             if (this.newMessage.trim() !== '') {
                 this.messages.push({ role: 'user', content: this.newMessage });
-                this.newMessage = '';
                 this.pageScroll();
                 const payload = {
                     userPrompt: this.newMessage,
@@ -154,14 +137,15 @@ export default {
                 if (chatId) {
                     payload.chatId = chatId
                 }
-                // this.$axios.post('chat', payload)
-                // .then((data) => {
-                //     this.messages.push({role:'assistant', content: data.message});
-                //     this.pageScroll();
-                //     if(data.chatId){
-                //         this.setQueryParam('chatId', data.chatId)
-                //     }
-                // })
+                this.newMessage = '';
+                this.$axios.post('chat', payload)
+                .then((data) => {
+                    this.messages.push({role:'assistant', content: data.message});
+                    this.pageScroll();
+                    if(data.chatId){
+                        this.setQueryParam('chatId', data.chatId)
+                    }
+                })
             }
         },
         // move scroll bottom of the page when new message added or page refreshed
@@ -173,17 +157,22 @@ export default {
 
         },
         setQueryParam(paramName, paramValue) {
-            const currentUrl = window.location.href;
-            const url = new URL(currentUrl);
-            url.searchParams.set(paramName, paramValue);
-            const updatedUrl = url.toString();
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set(paramName, paramValue);
+            const newUrl = currentUrl.toString();
+            window.history.pushState({ path: newUrl }, '', newUrl);
         },
         fetchExistingChat(chatId) {
             const payload = { chatId }
-            this.$axios.get('/chat', payload)
+            this.$axios.get('/chat', {
+                params: payload
+            })
                 .then((data) => {
                     this.$notyf.success("Chat is fetched Successfully");
-                    this.messages = data.messages;
+                    if(data && data.messages?.length){
+                        this.messages = data.messages;
+                        this.pageScroll();
+                    }
                 })
         },
         hasQueryParam(paramName) {
@@ -215,7 +204,11 @@ export default {
     mounted() {
         this.userName = localStorage.getItem('name');
         this.userEmail = localStorage.getItem('email');
-        if (this.hasQueryParam('chatId')) {
+        const token = localStorage.getItem('token');
+        if(!token){
+            this.$router.push('/login');
+        }
+        else if (this.hasQueryParam('chatId')) {
             this.fetchExistingChat(this.getQueryParamValue('chatId'));
         }
     }
@@ -223,12 +216,20 @@ export default {
 </script>
 <style scoped>
 .chat-area {
-    /* width: calc(100% - 256px); */
+    width: calc(100% - 256px);
     height: 100vh;
     background-color: #171717;
 }
 
 #chat-area {
     height: calc(100vh - 152px);
+}
+.help-text{
+    height: calc(100vh - 152px);
+}
+@media only screen and (max-width: 768px) {
+.chat-area {
+    width: 100%;
+}
 }
 </style>

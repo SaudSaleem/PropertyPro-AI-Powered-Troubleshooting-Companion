@@ -44,7 +44,7 @@ export default {
                     this.$notyf.success("Login Successfully");
                     this.email = "";
                     this.password = null;
-                    this.$router.push('/chat');
+                    this.$router.push('/');
                 })
                 .finally(() => {
                     this.btnDisable = false;
@@ -53,7 +53,7 @@ export default {
     },
     mounted() {
         if (localStorage.getItem('token')) {
-            this.$router.push('/chat');
+            this.$router.push('/');
         }
     }
 }
