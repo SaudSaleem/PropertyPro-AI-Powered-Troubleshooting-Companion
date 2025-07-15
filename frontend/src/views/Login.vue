@@ -21,11 +21,12 @@
     </div>
 </template>
 <script>
+
 export default {
     data() {
         return {
-            email: '',
-            password: null,
+            email: 'sauddsaleem@gmail.com',
+            password: '12345678',
             btnDisable: false,
         }
     },
@@ -39,12 +40,15 @@ export default {
                 password: this.password
             }
             this.btnDisable = true;
-            this.$axios.post('/login', payload)
+            this.$axios.post('/auth/login', payload)
                 .then(() => {
                     this.$notyf.success("Login Successfully");
                     this.email = "";
                     this.password = null;
                     this.$router.push('/');
+                })
+                .catch((error) => {
+                    this.$notyf.error(error.response.data.error);
                 })
                 .finally(() => {
                     this.btnDisable = false;

@@ -30,9 +30,9 @@
 export default {
   data() {
     return {
-      name: "",
-      email: '',
-      password: "",
+      name: "Saud",
+      email: 'sauddsaleem@gmail.com',
+      password: "12345678",
       btnDisable: false,
     }
   },
@@ -53,6 +53,7 @@ export default {
           this.name = "";
           this.email = "";
           this.password = "";
+          this.$router.push('/login');
         })
         .finally(() => {
           this.btnDisable = false;

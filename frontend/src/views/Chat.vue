@@ -138,7 +138,7 @@ export default {
                     payload.chatId = chatId
                 }
                 this.newMessage = '';
-                this.$axios.post('chat', payload)
+                this.$axios.post('chat/chat', payload)
                 .then((data) => {
                     this.messages.push({role:'assistant', content: data.message});
                     this.pageScroll();

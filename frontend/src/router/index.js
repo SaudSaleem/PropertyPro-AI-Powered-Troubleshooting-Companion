@@ -18,7 +18,8 @@ const routes = [
   {
     path: '/',
     name: 'ChatView',
-    component: ChatView
+    component: ChatView,
+    meta: { requiresAuth: true }
   },
   // Add a wildcard route for unmatched routes
   {
@@ -31,6 +32,28 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+});
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  try {
+    const isAuthenticated = localStorage.getItem('token');
+    
+    if (to.meta.requiresAuth && !isAuthenticated) {
+      next('/login');
+    } else {
+      next();
+    }
+  } catch (error) {
+    console.error('Navigation error:', error);
+    next('/login');
+  }
+});
+
+// Error handler
+router.onError((error) => {
+  console.error('Router error:', error);
+  router.push('/login');
 });
 
 export default router;

@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "property-pro-d0272",
+    "staging": "property-pro-d0272"
+  },
+  "targets": {},
+  "etags": {}
+}
